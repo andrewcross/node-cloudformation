@@ -6,12 +6,11 @@ Description: >
   Created by Luke Youngblood, luke@blockscale.net
 
 Parameters:
-
-# GitHub Parameters
+  # GitHub Parameters
 
   GitHubUser:
     Type: String
-    Default: tqtezos
+    Default: andrewcross
     Description: Your team or username on GitHub.
 
   GitHubRepo:
@@ -21,7 +20,7 @@ Parameters:
 
   GitHubBranch:
     Type: String
-    Default: testnet
+    Default: mainnet
     Description: The branch of the repo to continuously deploy.
 
   GitHubToken:
@@ -30,7 +29,7 @@ Parameters:
     Description: >
       Token for the team or user specified above. (https://github.com/settings/tokens)
 
-# VPC Parameters
+  # VPC Parameters
 
   VPC:
     Type: AWS::EC2::VPC::Id
@@ -42,7 +41,7 @@ Parameters:
     Type: String
     Default: 10.100.0.0/16
 
-# ECS Parameters
+  # ECS Parameters
 
   InstanceType:
     Type: String
@@ -67,7 +66,7 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /aws/service/ecs/optimized-ami/amazon-linux/recommended/image_id
 
-# Tezos Parameters
+  # Tezos Parameters
 
   RpcPort:
     Type: Number
@@ -81,16 +80,15 @@ Parameters:
     Type: String
     Default: delphinet
     AllowedValues:
-        - mainnet
-        - delphinet
-        - edo2net
+      - mainnet
+      - delphinet
+      - edo2net
 
   Connections:
     Type: Number
     Default: 40
 
 Metadata:
-
   AWS::CloudFormation::Interface:
     ParameterLabels:
       GitHubUser:
@@ -159,8 +157,7 @@ Metadata:
           - Connections
 
 Resources:
-
-# ECS Resources
+  # ECS Resources
 
   ChainBucket:
     Type: AWS::S3::Bucket
@@ -171,25 +168,20 @@ Resources:
       Bucket: !Ref ChainBucket
       PolicyDocument:
         Statement:
-          -
-            Action:
+          - Action:
               - s3:GetObject
               - s3:ListBucket
             Effect: Allow
             Resource:
-              - Fn::Join: 
-                - ""
-                - 
-                  - "arn:aws:s3:::"
-                  - 
-                    Ref: "ChainBucket"
-                  - "/*"
               - Fn::Join:
-                - ""
-                -
-                  - "arn:aws:s3:::"
-                  -
-                    Ref: "ChainBucket"
+                  - ""
+                  - - "arn:aws:s3:::"
+                    - Ref: "ChainBucket"
+                    - "/*"
+              - Fn::Join:
+                  - ""
+                  - - "arn:aws:s3:::"
+                    - Ref: "ChainBucket"
             Principal:
               AWS: "*"
 
@@ -204,8 +196,7 @@ Resources:
       GroupDescription: !Sub ${AWS::StackName}-sg
       VpcId: !Ref VPC
       Tags:
-        -
-          Key: Name
+        - Key: Name
           Value: !Sub ${AWS::StackName}-sg
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -476,10 +467,10 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           Action:
-            - 'sts:AssumeRole'
+            - "sts:AssumeRole"
           Effect: Allow
           Principal:
             Service:
@@ -491,11 +482,11 @@ Resources:
             Statement:
               Effect: Allow
               Action:
-              - application-autoscaling:*
-              - cloudwatch:DescribeAlarms
-              - cloudwatch:PutMetricAlarm
-              - ecs:DescribeServices
-              - ecs:UpdateService
+                - application-autoscaling:*
+                - cloudwatch:DescribeAlarms
+                - cloudwatch:PutMetricAlarm
+                - ecs:DescribeServices
+                - ecs:UpdateService
               Resource: "*"
 
   TaskExecutionRole:
@@ -516,8 +507,7 @@ Resources:
           PolicyDocument:
             Version: 2012-10-17
             Statement:
-              -
-                Effect: Allow
+              - Effect: Allow
                 Action:
                   - "s3:Get*"
                   - "s3:List*"
@@ -528,8 +518,7 @@ Resources:
           PolicyDocument:
             Version: 2012-10-17
             Statement:
-              -
-                Effect: Allow
+              - Effect: Allow
                 Action:
                   - "ssm:DescribeParameters"
                   - "ssm:PutParameter"
@@ -591,7 +580,7 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-stream-prefix: !Ref AWS::StackName
 
-# CodePipeline Resources
+  # CodePipeline Resources
 
   Repository:
     Type: AWS::ECR::Repository
@@ -770,9 +759,8 @@ Resources:
               RunOrder: 1
 
 Outputs:
-  
   ClusterName:
-      Value: !Ref Cluster
+    Value: !Ref Cluster
   Service:
     Value: !Ref ECSService
   PipelineUrl:
