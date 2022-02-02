@@ -180,7 +180,7 @@ Mappings:
     us-west-2:
       mainnet: mainnet-updater-chainbucket-1eq4z7ed2l45s
     us-east-2:
-      mainnet: mainnet-updater-chainbucket-1quiaj6t5d8yg
+      mainnet: tezos-updater-oh-chainbucket-xq1wyfczcekl
 
 Resources:
   # ECS Resources
